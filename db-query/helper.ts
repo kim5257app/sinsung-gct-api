@@ -93,30 +93,39 @@ export default {
 
     return (where === '') ? '' : where;
   },
-  transFiltersToArgs(filters: QueryFilter[]): string[] {
-    return filters
-      .filter((filter) => (filter.condition !== 'none' || filter.filters != null))
-      .map((filter) => {
-        let ret: string | string[];
-        let value = filter.value;
+  transFiltersToArgs(filters?: QueryFilter[]): string[] {
+    let args: string[] = [];
 
-        if (typeof filter.value === 'boolean') {
-          value = (value) ? 1 : 0;
-        }
+    if (filters != null) {
+      args = filters
+        .filter((filter) => (filter.condition !== 'none' || filter.filters != null))
+        .map((filter) => {
+          let ret: string | string[];
+          let value = filter.value;
 
-        if (filter.filters != null) {
-          ret = this.transFiltersToArgs(filter.filters);
-        } else if (filter.condition === 'in') {
-          ret = filter.value as [];
-        } else {
-          ret = (filter.condition === 'inc') ? `%${value}%` : `${value}`;
-        }
+          if (typeof filter.value === 'boolean') {
+            value = (value) ? 1 : 0;
+          }
 
-        return ret;
-      }).flat(10);
+          if (filter.filters != null) {
+            ret = this.transFiltersToArgs(filter.filters);
+          } else if (filter.condition === 'in') {
+            ret = filter.value as [];
+          } else {
+            ret = (filter.condition === 'inc') ? `%${value}%` : `${value}`;
+          }
+
+          return ret;
+        }).flat(10);
+    }
+
+    return args;
   },
-  transSortToSql({ sortBy, sortDesc }: QueryOrder, fields: QueryFields) {
+  transSortToSql(queryOrder: QueryOrder, fields: QueryFields) {
     let order = '';
+
+    const sortBy = (queryOrder.sortBy != null) ? queryOrder.sortBy : [];
+    const sortDesc = (queryOrder.sortDesc != null) ? queryOrder.sortDesc : [];
 
     if (sortBy!.length > 0) {
       order = 'ORDER BY ' +
