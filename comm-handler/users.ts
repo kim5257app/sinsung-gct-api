@@ -78,6 +78,7 @@ export default {
 
       resp({
         result: 'success',
+        item: userInfo,
       });
     });
   },

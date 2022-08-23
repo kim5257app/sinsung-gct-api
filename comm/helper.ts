@@ -14,4 +14,17 @@ export function makeHandler(
   });
 }
 
+export async function isAuthorized(socket: Socket) {
+  const userInfo = await socket.get('userInfo');
+
+  if (userInfo == null) {
+    Error.makeThrow({
+      name: 'ACCESS_DENIED',
+      message: 'Access denied',
+    });
+  }
+
+  return userInfo;
+}
+
 export default {};
