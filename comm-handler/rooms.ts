@@ -37,11 +37,11 @@ export default {
 
       try {
         const { insertId } = await db.getInstance()
-          .query(dbQuery.rooms.add(payload));
+          .query(dbQuery.rooms.addRoom(payload));
 
         const [item] = await db.getInstance()
           .query(dbQuery.rooms.getRoomList({
-            filters: [{condition: 'eq', column: 'no', value: insertId}],
+            filters: [{condition: 'eq', column: 'roomNo', value: insertId}],
           }));
 
         await db.getInstance()

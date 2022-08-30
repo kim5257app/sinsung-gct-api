@@ -109,6 +109,7 @@ export default {
       "  :master, :manager, :write\n" +
       "FROM messages",
     args: {
+      ...args,
       master: (args.master) ? 1 : 0,
       manager: (args.manager) ? 1 : 0,
       write: (args.write) ? 1 : 0,
