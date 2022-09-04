@@ -10,6 +10,9 @@ const roomsFields = {
   disabled: 'rooms.disabled',
   offset: 'room_user_map.`offset`',
   id: 'room_user_map.id',
+  msgNo: 'messages.`no`',
+  msgType: 'messages.`type`',
+  msgCreated: 'messages.created',
 };
 
 export default {
@@ -72,16 +75,20 @@ export default {
         "  rooms.`no`, rooms.`name`,\n" +
         "  rooms.public, rooms.`write`,\n" +
         "  rooms.created, rooms.updated, rooms.disabled,\n" +
-        "  room_user_map.`offset`\n" +
+        "  room_user_map.`offset`,\n" +
+        "  messages.`no` AS msgNo,\n" +
+        "  messages.`type` AS msgType,\n" +
+        "  messages.`contents`,\n" +
+        "  messages.created AS msgCreated\n" +
         "FROM rooms\n" +
         "JOIN room_user_map ON room_user_map.room_no=rooms.`no`\n" +
-        "JOIN messages ON messages.room_no=rooms.`no`\n";
+        "LEFT JOIN messages ON messages.`no`=room_user_map.`offset`\n";
       const lookup =
         "JOIN\n" +
         "  (SELECT rooms.`no`" +
         "  FROM rooms\n" +
         "  JOIN room_user_map ON room_user_map.room_no=rooms.`no`\n" +
-        "  JOIN messages ON messages.room_no=rooms.`no`\n" +
+        "  LEFT JOIN messages ON messages.`no`=room_user_map.`offset`\n" +
         ((where === '') ? '' : `WHERE\n${where}\n`) +
         order +
         dbHelper.transOffsetToSql(args) +
